@@ -12,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class OccOutput extends BufferedOutput implements ConsoleOutputInterface
 {
   private $consoleSectionOutputs = [];
+  private $errorOutput;
 
   private $stream;
   /**
@@ -21,13 +22,16 @@ class OccOutput extends BufferedOutput implements ConsoleOutputInterface
    */
   public function getErrorOutput(): OutputInterface
   {
-    // TODO: Implement getErrorOutput() method.
-    return $this;
+    if ($this->errorOutput === null) {
+      // Keep compatibility when no explicit stderr output is configured.
+      $this->errorOutput = $this;
+    }
+    return $this->errorOutput;
   }
 
   public function setErrorOutput(OutputInterface $error)
   {
-
+    $this->errorOutput = $error;
   }
 
   /**
