@@ -49,6 +49,7 @@ class OccController extends Controller
 
   /**
    * @NoCSRFRequired
+   * @AdminRequired
    */
   public function index()
   {
@@ -73,6 +74,7 @@ class OccController extends Controller
   /**
    * @param string $command
    * @return DataResponse
+   * @AdminRequired
    */
   public function cmd($command)
   {
@@ -83,6 +85,9 @@ class OccController extends Controller
     return new DataResponse($response);
   }
 
+  /**
+   * @AdminRequired
+   */
   public function list() {
     $defs = $this->symphonyApplication->all();
     $cmds = array();
@@ -92,4 +97,3 @@ class OccController extends Controller
     return new DataResponse($cmds);
   }
 }
-
