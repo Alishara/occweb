@@ -20,7 +20,6 @@ class OccController extends Controller
   private $userId;
 
   private $application;
-  private $symphonyApplication;
   private $output;
 
   public function __construct($AppName, IRequest $request, $userId)
@@ -41,10 +40,7 @@ class OccController extends Controller
     );
     $this->application->setAutoExit(false);
     $this->output = new OccOutput(OutputInterface::VERBOSITY_NORMAL, true);
-    $this->application->loadCommands(new StringInput(""), $this->output);    
-    $reflectionProperty = new \ReflectionProperty(Application::class, 'application');
-    $reflectionProperty->setAccessible(true);
-    $this->symphonyApplication = $reflectionProperty->getValue($this->application);
+    $this->application->loadCommands(new StringInput(""), $this->output);
   }
 
   /**
@@ -103,11 +99,22 @@ class OccController extends Controller
    * @AdminRequired
    */
   public function list() {
-    $defs = $this->symphonyApplication->all();
-    $cmds = array();
-    foreach ($defs as $d) {
-      array_push($cmds, $d->getName());
+    $output = $this->run(new StringInput('list --raw'));
+    $lines = preg_split('/\r\n|\r|\n/', (string)$output);
+    $cmds = [];
+
+    foreach ($lines as $line) {
+      $line = trim($line);
+      if ($line === '') {
+        continue;
+      }
+
+      $parts = preg_split('/\s+/', $line, 2);
+      if (!empty($parts[0])) {
+        $cmds[] = $parts[0];
+      }
     }
-    return new DataResponse($cmds);
+
+    return new DataResponse(array_values(array_unique($cmds)));
   }
 }
