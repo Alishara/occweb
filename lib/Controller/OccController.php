@@ -78,10 +78,24 @@ class OccController extends Controller
    */
   public function cmd($command)
   {
-    $this->logger->debug($command);
-    $input = new StringInput($command);
+    $startedAt = microtime(true);
+    $rawCommand = trim((string)$command);
+    $commandName = strtok($rawCommand, ' ') ?: 'unknown';
+
+    $this->logger->info('occweb command started', [
+      'user' => $this->userId,
+      'command' => $commandName,
+    ]);
+
+    $input = new StringInput($rawCommand);
     $response = $this->run($input);
-    $this->logger->debug($response);
+
+    $this->logger->info('occweb command finished', [
+      'user' => $this->userId,
+      'command' => $commandName,
+      'duration_ms' => (int)round((microtime(true) - $startedAt) * 1000),
+    ]);
+
     return new DataResponse($response);
   }
 
