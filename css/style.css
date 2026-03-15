@@ -773,3 +773,15 @@ terminal .terminal-output > div {
 .prompt span, .cursor-line span span, .command div span{
   color: #009ae3 !important;
 }
+
+/* Keep terminal content left-aligned even when Nextcloud runs in RTL mode */
+html[dir="rtl"] #app-content.terminal,
+html[dir="rtl"] #app-content .terminal,
+html[dir="rtl"] #app-content .terminal-output,
+html[dir="rtl"] #app-content .terminal-output > div > div,
+html[dir="rtl"] #app-content .cmd,
+html[dir="rtl"] #app-content .cmd div,
+html[dir="rtl"] #app-content .cmd .prompt {
+  direction: ltr;
+  text-align: left;
+}
